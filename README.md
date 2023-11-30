@@ -1,4 +1,4 @@
-# java-gradle-starter-project
+# zoom and rotation testing app
 
 This project has been created to look at differences between JavaFX gestures on Windows, Linux and Mac.
 

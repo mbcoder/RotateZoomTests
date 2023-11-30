@@ -16,29 +16,27 @@
 
 package com.mycompany.app;
 
-import com.esri.arcgisruntime.ArcGISRuntimeEnvironment;
-import com.esri.arcgisruntime.mapping.BasemapStyle;
-import com.esri.arcgisruntime.mapping.ArcGISMap;
-import com.esri.arcgisruntime.mapping.view.MapView;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.RotateEvent;
+import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class App extends Application {
-
-    private MapView mapView;
-
     public static void main(String[] args) {
-
         Application.launch(args);
     }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws FileNotFoundException {
 
         // set the title and size of the stage and show it
-        stage.setTitle("My Map App");
+        stage.setTitle("Zoom and rotate test app");
         stage.setWidth(800);
         stage.setHeight(700);
         stage.show();
@@ -48,22 +46,23 @@ public class App extends Application {
         Scene scene = new Scene(stackPane);
         stage.setScene(scene);
 
-        // Note: it is not best practice to store API keys in source code.
-        // An API key is required to enable access to services, web maps, and web scenes hosted in ArcGIS Online.
-        // If you haven't already, go to your developer dashboard to get your API key.
-        // Please refer to https://developers.arcgis.com/java/get-started/ for more information
-        String yourApiKey = "YOUR_API_KEY";
-        ArcGISRuntimeEnvironment.setApiKey(yourApiKey);
+        // make image
+        Image image = new Image(new FileInputStream("screenshot.png"));
 
-        // create a MapView to display the map and add it to the stack pane
-        mapView = new MapView();
-        stackPane.getChildren().add(mapView);
+        // make image view
+        ImageView imageView = new ImageView(image);
 
-        // create an ArcGISMap with an imagery basemap
-        ArcGISMap map = new ArcGISMap(BasemapStyle.ARCGIS_IMAGERY);
+        // rotate event handler
+        imageView.addEventHandler(RotateEvent.ANY, event -> {
+            imageView.setRotate(imageView.getRotate() + event.getAngle());
+        });
 
-        // display the map by setting the map on the map view
-        mapView.setMap(map);
+        // zoom event handler - just console reports for now.
+        imageView.addEventHandler(ZoomEvent.ANY , event -> {
+            System.out.println("Zoom event fired " + event.getZoomFactor());
+        });
+
+        stackPane.getChildren().add(imageView);
     }
 
     /**
@@ -72,8 +71,5 @@ public class App extends Application {
     @Override
     public void stop() {
 
-        if (mapView != null) {
-            mapView.dispose();
-        }
     }
 }
